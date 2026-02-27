@@ -1,9 +1,11 @@
 package nec.bikram.journalApp.controller;
 
+import nec.bikram.journalApp.api.response.WeatherResponse;
 import nec.bikram.journalApp.entity.JournalEntry;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.service.JournalEntryService;
 import nec.bikram.journalApp.service.UserService;
+import nec.bikram.journalApp.service.WeatherService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private WeatherService weatherService;
 
     @GetMapping
     public ResponseEntity<?> getAllUser(){
@@ -82,9 +86,17 @@ public ResponseEntity<?> gettingUserByUsername(@PathVariable String username) {
                 .body("User not found"); // 404 Not Found
     }
 }
+@GetMapping("/greetings")
+public ResponseEntity<?> greetings(){
 
+    Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+    WeatherResponse weatherResponse =weatherService.getWeather("Mumbai");
+    String greeting="";
+    if(weatherResponse!=null){
+            greeting=", Weather feels like "+weatherResponse.getCurrent().getFeelsLike()+" C";
 
-
-
+    }
+return ResponseEntity.ok("Hello "+authentication.getName()+greeting);
+}
 
 }

@@ -42,8 +42,6 @@ public class UserService {
             return true;
         }catch(Exception e){
             log.error("hahahaha error occured for user:{}",user.getUsername());
-            log.error("hahahaha error occured for user:{}",user.getUsername());
-            log.error("hahahaha error occured for user:{}",user.getUsername());
 //            log.trace("hahahaha error occured for user:{}",user.getUsername());
 //            log.debug("hahahaha error occured for user:{}",user.getUsername());
             return false;

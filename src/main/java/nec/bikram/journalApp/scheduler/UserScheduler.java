@@ -1,5 +1,6 @@
 package nec.bikram.journalApp.scheduler;
 
+import nec.bikram.journalApp.cache.AppCache;
 import nec.bikram.journalApp.entity.JournalEntry;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.repository.UserRepoImpl;
@@ -27,7 +28,11 @@ public class UserScheduler {
     @Autowired
     private SentimentAnalysisService sentimentsAnalysisService;
 
+    @Autowired
+    private AppCache appCache;
+
     @Scheduled(cron = "0 0 9 * * SUN")
+//    @Scheduled(cron = "0 * * ? * *")
     public void fetchUsesAndSendSaMail(){
 
         List<User> users = userRepoImpl.getUsersForSA();
@@ -41,6 +46,9 @@ public class UserScheduler {
 
 
     }
-
+    @Scheduled(cron = "0 0/10 * ? * *")
+    public void clearAppCache(){
+        appCache.init();
+    }
 
 }

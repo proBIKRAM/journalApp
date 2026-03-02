@@ -21,7 +21,7 @@ public class EmailService {
             mail.setSubject(subject);
             mail.setText(body);
             javaMailSender.send(mail);
-
+            System.out.println("sending email to: "+ to);
         } catch (Exception e) {
             log.error("Error while sending email to {}: {}", to, e.getMessage());
              throw new RuntimeException("Error while sending email.", e);

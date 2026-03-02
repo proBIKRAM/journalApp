@@ -29,6 +29,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getAllUser(){
+        //self info only
         List<User> all=userService.getAll();
         if(!all.isEmpty() && all!=null){
             return new ResponseEntity<>(all,HttpStatus.OK);

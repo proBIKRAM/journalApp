@@ -91,7 +91,7 @@ public ResponseEntity<?> gettingUserByUsername(@PathVariable String username) {
 public ResponseEntity<?> greetings(){
 
     Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-    WeatherResponse weatherResponse =weatherService.getWeather("Mumbai");
+    WeatherResponse weatherResponse =weatherService.getWeather("London");
     String greeting="";
     if(weatherResponse!=null){
             greeting=", Weather feels like "+weatherResponse.getCurrent().getFeelsLike()+" C";

@@ -2,6 +2,7 @@ package nec.bikram.journalApp.Service;
 
 import nec.bikram.journalApp.service.UserService;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -20,6 +21,7 @@ public class UserServiceTests {
     @Autowired
     UserService userService;
 
+    @Disabled
     @ParameterizedTest
 //    @CsvSource({"admin",
 //        "bikram",

@@ -1,20 +1,25 @@
 package nec.bikram.journalApp.Service;
 
-import nec.bikram.journalApp.service.EmailService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 @SpringBootTest
-public class EmailServiceTest {
+public class RedisTest {
+
     @Autowired
-    EmailService emailService;
+    private RedisTemplate redisTemplate;
 
     @Disabled
     @Test
-    void sendEmail(){
-        emailService.sendEmail("lb9770099@gmail.com","Testing java mail sender","How are you doing? This is a test email from Java Mail Sender.");
+    void testRedis(){
+        redisTemplate.opsForValue().set("email","lb@gmail.com");
+        Object name = redisTemplate.opsForValue().get("name");
+        int a=1;
     }
+
+
 
 }

@@ -7,6 +7,7 @@ import nec.bikram.journalApp.service.EmailService;
 import nec.bikram.journalApp.service.SentimentAnalysisService;
 import nec.bikram.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,12 +27,13 @@ public class UserScheduler {
     @Autowired
     private SentimentAnalysisService sentimentsAnalysisService;
 
-    public void fetchUsesAndSendSA(){
+    @Scheduled(cron = "0 0 9 * * SUN")
+    public void fetchUsesAndSendSaMail(){
 
         List<User> users = userRepoImpl.getUsersForSA();
         for(User user : users){
             List<JournalEntry> entries = user.getJournalEntries();
-            List<String> filteredEntries = entries.stream().filter(x->x.getDate().isAfter(LocalDateTime.now().minus(7, ChronoUnit.DAYS))).map(x->x.getContent()).collect(Collectors.toList());
+            List<String> filteredEntries = entries.stream().filter(x->x.getDate().isAfter(LocalDateTime.now().minus(7, ChronoUnit.DAYS))).map(JournalEntry::getContent).collect(Collectors.toList());
             String entry = String.join(" ",filteredEntries);
             String sentiment = sentimentsAnalysisService.getSentiment(entry);
             emailService.sendEmail(user.getEmail(),"sentiment for last 7 days", sentiment);

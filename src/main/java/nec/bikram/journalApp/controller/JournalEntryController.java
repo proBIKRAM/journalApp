@@ -2,6 +2,7 @@ package nec.bikram.journalApp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import nec.bikram.journalApp.dto.JournalDto;
 import nec.bikram.journalApp.entity.JournalEntry;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.service.JournalEntryService;
@@ -31,7 +32,11 @@ public class JournalEntryController {
 
     @PostMapping
     @Operation(summary = "Create a new Journal Entry")
-    public ResponseEntity<?> createJournalEntryForUser(@RequestBody JournalEntry myEntry) {
+    public ResponseEntity<?> createJournalEntryForUser(@RequestBody JournalDto Entry) {
+        JournalEntry myEntry = new JournalEntry();
+        myEntry.setTitle(Entry.getTitle());
+        myEntry.setContent(Entry.getContent());
+        myEntry.setSentiment(Entry.getSentiment());
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
@@ -89,8 +94,15 @@ public class JournalEntryController {
 
     @PutMapping("/id/{myId}")
     @Operation(summary = "Update a Journal Entry by ID")
-    public ResponseEntity<?> updateJournalEntryById(@PathVariable String myId, @RequestBody JournalEntry myEntry) {
+    public ResponseEntity<?> updateJournalEntryById(@PathVariable String myId, @RequestBody JournalDto Entry) {
+
         ObjectId id = new ObjectId(myId);
+
+        JournalEntry myEntry = new JournalEntry();
+        myEntry.setTitle(Entry.getTitle());
+        myEntry.setContent(Entry.getContent());
+        myEntry.setSentiment(Entry.getSentiment());
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);

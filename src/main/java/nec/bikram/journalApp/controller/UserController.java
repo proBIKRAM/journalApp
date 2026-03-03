@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import nec.bikram.journalApp.api.response.WeatherResponse;
+import nec.bikram.journalApp.dto.UserDto;
 import nec.bikram.journalApp.entity.JournalEntry;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.service.JournalEntryService;
@@ -61,7 +62,12 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "Update User")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    public ResponseEntity<?> updateUser(@RequestBody UserDto usr){
+        User user = new User();
+        user.setUsername(usr.getUsername());
+        user.setPassword(usr.getPassword());
+        user.setEmail(usr.getEmail());
+        user.setSentimentAnalysis(user.isSentimentAnalysis());
        try {
            Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
            String username=authentication.getName();

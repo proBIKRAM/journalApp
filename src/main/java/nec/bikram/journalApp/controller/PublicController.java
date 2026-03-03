@@ -1,6 +1,9 @@
 package nec.bikram.journalApp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import nec.bikram.journalApp.dto.UserDto;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.repository.UserRepository;
 import nec.bikram.journalApp.service.UserDetailsServiceImpl;
@@ -15,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Public API", description = "Login, Signup")
 @Slf4j
 @RestController
 @RequestMapping("/public")
@@ -30,9 +34,12 @@ public class PublicController {
     private JwtUtil jwtUtil;
 
     @GetMapping("/health-check")
+    @Operation(summary = "1st step - Initial Health Check")
     public String healthCheck(){return "OK";}
 
+
     @PostMapping("/login")
+    @Operation(summary = "Login a User")
     public ResponseEntity<String> logIn (@RequestBody User user) {
 
         try {
@@ -50,17 +57,15 @@ public class PublicController {
 
 
     @PostMapping("/signup")
-    public void signUp (@RequestBody User user) {
-        userService.saveNewUser(user);
+    @Operation(summary = "Create a new User")
+    public void signUp (@RequestBody UserDto user) {
+        User newuser = new User();
+        newuser.setUsername(user.getUsername());
+        newuser.setPassword(user.getPassword());
+        newuser.setEmail(user.getEmail());
+        newuser.setSentimentAnalysis(user.isSentimentAnalysis());
+        userService.saveNewUser(newuser);
     }
-    @PutMapping("/{create-user}")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
-        try {
-            userService.saveUser(user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
+
 
 }

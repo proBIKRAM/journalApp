@@ -1,4 +1,6 @@
 package nec.bikram.journalApp.controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import nec.bikram.journalApp.entity.JournalEntry;
 import nec.bikram.journalApp.entity.User;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Tag(name = "Journal API", description = "Create, Read, Update, Delete Journal Entries")
 @Slf4j
 @RestController
 @RequestMapping("/journal")
@@ -27,6 +30,7 @@ public class JournalEntryController {
     private UserService userService;
 
     @PostMapping
+    @Operation(summary = "Create a new Journal Entry")
     public ResponseEntity<?> createJournalEntryForUser(@RequestBody JournalEntry myEntry) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -39,6 +43,7 @@ public class JournalEntryController {
     }
 
     @GetMapping
+    @Operation(summary = "Get all Journal Entries of a User")
     public ResponseEntity<?> getAllJournalEntriesOfUser() {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -52,14 +57,16 @@ public class JournalEntryController {
     }
 
     @GetMapping("/id/{myid}")
-    public ResponseEntity<?> getJournalEntryById(@PathVariable ObjectId myid) {
+    @Operation(summary = "Get a Journal Entry by ID")
+    public ResponseEntity<?> getJournalEntryById(@PathVariable String myid) {
+        ObjectId id = new ObjectId(myid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
-        List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(myid)).collect(Collectors.toList());
-        Optional<JournalEntry> journal = journalEntryService.findById(myid);
+        List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(id)).collect(Collectors.toList());
+        Optional<JournalEntry> journal = journalEntryService.findById(id);
         if (!collect.isEmpty()) {
-            Optional<JournalEntry> journalEntry = journalEntryService.findById(myid);
+            Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
             if (journalEntry.isPresent()) {
                 return new ResponseEntity<>(journal.get(), HttpStatus.OK);
             }
@@ -68,10 +75,12 @@ public class JournalEntryController {
     }
 
     @DeleteMapping("/id/{myid}")
-    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myid) {
+    @Operation(summary = "Delete a Journal Entry by ID")
+    public ResponseEntity<?> deleteJournalEntryById(@PathVariable String myid) {
+        ObjectId id = new ObjectId(myid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        boolean removed = journalEntryService.deleteById(myid, username);
+        boolean removed = journalEntryService.deleteById(id, username);
         if (removed) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else
@@ -79,15 +88,16 @@ public class JournalEntryController {
     }
 
     @PutMapping("/id/{myId}")
-    public ResponseEntity<?> updateJournalEntryById(@PathVariable ObjectId myId, @RequestBody JournalEntry myEntry) {
-
+    @Operation(summary = "Update a Journal Entry by ID")
+    public ResponseEntity<?> updateJournalEntryById(@PathVariable String myId, @RequestBody JournalEntry myEntry) {
+        ObjectId id = new ObjectId(myId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
-        List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(myId)).collect(Collectors.toList());
+        List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(id)).collect(Collectors.toList());
 
         if (!collect.isEmpty()) {
-            Optional<JournalEntry> journalEntry = journalEntryService.findById(myId);
+            Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
             if (journalEntry.isPresent()) {
                 JournalEntry old = journalEntry.get();
 

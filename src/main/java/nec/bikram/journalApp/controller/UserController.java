@@ -1,5 +1,7 @@
 package nec.bikram.journalApp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import nec.bikram.journalApp.api.response.WeatherResponse;
 import nec.bikram.journalApp.entity.JournalEntry;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "User API", description = "Create, Read, Update, Delete Users")
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -30,6 +33,7 @@ public class UserController {
     private WeatherService weatherService;
 
     @GetMapping("search/{username}")
+    @Operation(summary = "Search other User by Username")
     public ResponseEntity<?> getUserById(@PathVariable String username){
 
            User usr = userService.getUserByUsername(username);
@@ -40,7 +44,9 @@ public class UserController {
                return new ResponseEntity<>("User Not Found",HttpStatus.NO_CONTENT);
            }
     }
+
     @DeleteMapping
+    @Operation(summary = "Delete User")
     public ResponseEntity<?> deleteUser(){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,6 +60,7 @@ public class UserController {
     }
 
     @PutMapping
+    @Operation(summary = "Update User")
     public ResponseEntity<?> updateUser(@RequestBody User user){
        try {
            Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
@@ -72,6 +79,7 @@ public class UserController {
     }
 /// here
 @GetMapping
+@Operation(summary = "Get User by Username")
 public ResponseEntity<?> gettingUserByUsername() {
     Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
     String username = authentication.getName();
@@ -87,6 +95,7 @@ public ResponseEntity<?> gettingUserByUsername() {
     }
 }
 @GetMapping("/greetings")
+@Operation(summary = "Get Greetings/weather info(London)")
 public ResponseEntity<?> greetings(){
     try {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -95,7 +104,7 @@ public ResponseEntity<?> greetings(){
         if (weatherResponse != null) {
             greeting = ", Weather feels like " + weatherResponse.getCurrent().getFeelsLike() + " C";
         }
-        return ResponseEntity.ok("Hello " + authentication.getName() + greeting);
+        return ResponseEntity.ok("Hello dear - " + authentication.getName() +"!"+ greeting);
     }catch (Exception e){
         log.error("Error getting greetings: {}", e.getMessage());
         return ResponseEntity.status(500).body("Error getting greetings");

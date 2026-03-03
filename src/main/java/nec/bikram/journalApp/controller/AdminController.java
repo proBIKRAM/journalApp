@@ -1,5 +1,7 @@
 package nec.bikram.journalApp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.service.UserService;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Admin API", description = "get all users, create new admin ")
 @Slf4j
 @RestController
 @RequestMapping("/admin")
@@ -20,7 +23,9 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+
     @GetMapping("/all-users")
+    @Operation(summary = "Get all users in JournalApp")
     public ResponseEntity<?> getAllUsers(){
         List<User> all=userService.getAll();
         if(all!=null && !all.isEmpty()){
@@ -29,6 +34,7 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @PostMapping("/create-admin")
+    @Operation(summary = "Create a new admin")
     public ResponseEntity<?> createUser(@RequestBody User user){
         userService.saveAdmin(user);
         return new ResponseEntity<>(user,HttpStatus.CREATED);

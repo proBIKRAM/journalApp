@@ -1,5 +1,6 @@
 package nec.bikram.journalApp.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import nec.bikram.journalApp.api.response.WeatherResponse;
 import nec.bikram.journalApp.entity.JournalEntry;
 import nec.bikram.journalApp.entity.User;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -27,37 +29,30 @@ public class UserController {
     @Autowired
     private WeatherService weatherService;
 
-    @GetMapping
-    public ResponseEntity<?> getAllUser(){
-        //self info only
-        List<User> all=userService.getAll();
-        if(!all.isEmpty() && all!=null){
-            return new ResponseEntity<>(all,HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
-    @GetMapping("/id/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable ObjectId id){
+    @GetMapping("search/{username}")
+    public ResponseEntity<?> getUserById(@PathVariable String username){
 
-           Optional<User> usr = userService.findById(id);
-           if(usr.isPresent()) {
-                return new ResponseEntity<>(usr.get(), HttpStatus.OK);
+           User usr = userService.getUserByUsername(username);
+           if(usr!=null) {
+                return new ResponseEntity<>(usr, HttpStatus.OK);
            }
            else {
-               return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+               return new ResponseEntity<>("User Not Found",HttpStatus.NO_CONTENT);
            }
     }
-    @DeleteMapping("/id/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable ObjectId id){
-        userService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(){
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            userService.deleteByUsername(username);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            log.error("Error deleting user: {}", e.getMessage());
+            return new ResponseEntity<>("Error deleting user ",HttpStatus.BAD_REQUEST);
+        }
     }
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user){
-        userService.saveNewUser(user);
-        return new ResponseEntity<>(user,HttpStatus.CREATED);
-    }
+
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody User user){
        try {
@@ -71,17 +66,21 @@ public class UserController {
            userService.saveNewUser(userInDb);
            return new ResponseEntity<>(userInDb, HttpStatus.OK);
        }catch (Exception e){
-           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+           log.error("error updating user:{}",user.getUsername());
+           return new ResponseEntity<>("error updating user",HttpStatus.BAD_REQUEST);
        }
     }
 /// here
-@GetMapping("/{username}")
-public ResponseEntity<?> gettingUserByUsername(@PathVariable String username) {
+@GetMapping
+public ResponseEntity<?> gettingUserByUsername() {
+    Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
     User user = userService.getUserByUsername(username);
 
     if (user != null) {
         return ResponseEntity.ok(user); // 200 OK with user data
     } else {
+        log.error("User not found for username: {}", username);
         return ResponseEntity
                 .status(404)
                 .body("User not found"); // 404 Not Found
@@ -89,15 +88,18 @@ public ResponseEntity<?> gettingUserByUsername(@PathVariable String username) {
 }
 @GetMapping("/greetings")
 public ResponseEntity<?> greetings(){
-
-    Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-    WeatherResponse weatherResponse =weatherService.getWeather("London");
-    String greeting="";
-    if(weatherResponse!=null){
-            greeting=", Weather feels like "+weatherResponse.getCurrent().getFeelsLike()+" C";
-
+    try {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        WeatherResponse weatherResponse = weatherService.getWeather("London");
+        String greeting = "";
+        if (weatherResponse != null) {
+            greeting = ", Weather feels like " + weatherResponse.getCurrent().getFeelsLike() + " C";
+        }
+        return ResponseEntity.ok("Hello " + authentication.getName() + greeting);
+    }catch (Exception e){
+        log.error("Error getting greetings: {}", e.getMessage());
+        return ResponseEntity.status(500).body("Error getting greetings");
     }
-return ResponseEntity.ok("Hello "+authentication.getName()+greeting);
 }
 
 }

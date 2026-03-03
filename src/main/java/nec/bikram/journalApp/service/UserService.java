@@ -42,8 +42,6 @@ public class UserService {
             return true;
         }catch(Exception e){
             log.error("hahahaha error occured for user:{}",user.getUsername());
-//            log.trace("hahahaha error occured for user:{}",user.getUsername());
-//            log.debug("hahahaha error occured for user:{}",user.getUsername());
             return false;
         }
     }
@@ -53,8 +51,8 @@ public class UserService {
     public Optional<User> findById(ObjectId id){
         return userRepository.findById(id);
     }
-    public void deleteById(ObjectId id) {
-        userRepository.deleteById(id);
+    public void deleteByUsername(String id) {
+        userRepository.deleteUserByUsername(id);
     }
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);

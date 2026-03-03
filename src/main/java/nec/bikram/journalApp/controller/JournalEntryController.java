@@ -1,4 +1,5 @@
 package nec.bikram.journalApp.controller;
+import lombok.extern.slf4j.Slf4j;
 import nec.bikram.journalApp.entity.JournalEntry;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.service.JournalEntryService;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/journal")
 public class JournalEntryController {
@@ -24,17 +26,6 @@ public class JournalEntryController {
     @Autowired
     private UserService userService;
 
-    /*   @PostMapping
-       public ResponseEntity<?> createJournalEntry(@RequestBody JournalEntry myEntry) {
-          try {
-                journalEntryService.saveEntry(myEntry, user);
-                return new ResponseEntity<>(myEntry,HttpStatus.CREATED);
-          }catch (Exception e){
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          }
-       }
-
-     */
     @PostMapping
     public ResponseEntity<?> createJournalEntryForUser(@RequestBody JournalEntry myEntry) {
         try {
@@ -46,25 +37,18 @@ public class JournalEntryController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-//   @GetMapping
-//    public ResponseEntity<?> getAllEntries(){
-//        List<JournalEntry> all=journalEntryService.getAll();
-//        if(!all.isEmpty() && all != null){
-//            return new ResponseEntity<>(all,HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
 
     @GetMapping
     public ResponseEntity<?> getAllJournalEntriesOfUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByUsername(username);
-        List<JournalEntry> all = user.getJournalEntries();
-        if (!all.isEmpty() && all != null) {
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            User user = userService.getUserByUsername(username);
+            List<JournalEntry> all = user.getJournalEntries();
+            if (all.isEmpty() || all == null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
             return new ResponseEntity<>(all, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/id/{myid}")

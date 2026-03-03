@@ -1,20 +1,11 @@
-FROM openjdk:17-jdk-slim
-
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-
-RUN chmod +x mvnw
-
-RUN ./mvnw dependency:go-offline -B
-
-COPY src src
-
-RUN ./mvnw package -DskipTests
-
-ENV PORT=8080
+# Stage 2: Run the app
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","target/journalApp-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

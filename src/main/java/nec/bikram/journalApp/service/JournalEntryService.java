@@ -66,13 +66,5 @@ public class JournalEntryService {
         return removed;
 
     }
-   /* public List<JournalEntry> findByUsername(String username){
 
-    }
-
-    */
-//    public JournalEntry updateById(ObjectId id, JournalEntry entry){
-//
-//
-//    }
 }

@@ -17,7 +17,7 @@ public class SwaggerConfig {
                 .info(new Info().title("Journal App APIs").description("By Bikram"))
                 .servers(List.of(
                         new io.swagger.v3.oas.models.servers.Server().url("http://localhost:8080").description("Local"),
-                        new Server().url("http://localhost:8081").description("Live")
+                        new Server().url("https://journalapp-vg41.onrender.com").description("Live")
                 ));
     }
 }

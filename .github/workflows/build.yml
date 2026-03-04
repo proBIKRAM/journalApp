@@ -46,3 +46,5 @@ jobs:
             -Dsonar.projectKey=proBIKRAM_journalApp \
             -Dsonar.organization=probikram \
             -Dsonar.token=$SONAR_TOKEN
+            -Dsonar.java.coveragePlugin=jacoco \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

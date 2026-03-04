@@ -43,6 +43,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=proBIKRAM_journalApp \
-            -Dsonar.organization=probikram \
+            -Dsonar.projectKey=proBIKRAM_JournalApp \
+            -Dsonar.organization=proBIKRAM \
             -Dsonar.login=$SONAR_TOKEN

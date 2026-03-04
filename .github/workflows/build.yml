@@ -1,4 +1,4 @@
-name: Build & SonarCloud
+name: Build, Test & SonarCloud
 
 on:
   push:
@@ -10,31 +10,37 @@ jobs:
   sonar:
     runs-on: ubuntu-latest
     steps:
+      # Checkout code
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Java
+      # Setup Java
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'zulu'
 
-      - name: Cache Maven
+      #  Cache Maven
+      - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
 
-      - name: Build, test & generate coverage
+      # Build and run tests to generate JaCoCo XML
+      - name: Build & Test
         run: mvn clean verify
 
-      - name: SonarCloud analysis
+      # SonarCloud Analysis
+      - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar \
-          -Dsonar.projectKey=proBIKRAM_journalApp \
-          -Dsonar.organization=probikram \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.token=$SONAR_TOKEN \
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=proBIKRAM_journalApp \
+            -Dsonar.organization=probikram \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

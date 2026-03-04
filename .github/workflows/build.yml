@@ -45,4 +45,4 @@ jobs:
           mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=proBIKRAM_journalApp \
             -Dsonar.organization=probikram \
-            -Dsonar.login=$SONAR_TOKEN
+            -Dsonar.token=$SONAR_TOKEN

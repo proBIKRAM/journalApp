@@ -3,6 +3,7 @@ package nec.bikram.journalApp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import nec.bikram.journalApp.dto.UserDto;
 import nec.bikram.journalApp.entity.User;
 import nec.bikram.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,13 @@ public class AdminController {
     }
     @PostMapping("/create-admin")
     @Operation(summary = "Create a new admin")
-    public ResponseEntity<?> createUser(@RequestBody User user){
+    public ResponseEntity<?> createUser(@RequestBody UserDto usr){
+
+        User user = new User();
+        user.setUsername(usr.getUsername());
+        user.setPassword(usr.getPassword());
+        user.setEmail(usr.getEmail());
+        user.setSentimentAnalysis(user.isSentimentAnalysis());
         userService.saveAdmin(user);
         return new ResponseEntity<>(user,HttpStatus.CREATED);
     }

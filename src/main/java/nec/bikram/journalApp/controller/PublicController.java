@@ -40,7 +40,11 @@ public class PublicController {
 
     @PostMapping("/login")
     @Operation(summary = "Login a User")
-    public ResponseEntity<String> logIn (@RequestBody User user) {
+    public ResponseEntity<String> logIn (@RequestBody UserDto usr) {
+
+        User user = new User();
+        user.setUsername(usr.getUsername());
+        user.setPassword(usr.getPassword());
 
         try {
             authenticationManager.authenticate(

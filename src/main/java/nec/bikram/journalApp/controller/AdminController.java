@@ -43,8 +43,13 @@ public class AdminController {
         user.setPassword(usr.getPassword());
         user.setEmail(usr.getEmail());
         user.setSentimentAnalysis(user.isSentimentAnalysis());
-        userService.saveAdmin(user);
-        return new ResponseEntity<>(user,HttpStatus.CREATED);
+        try {
+            userService.saveAdmin(user);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        }catch (Exception e){
+            log.error("Error while creating new user(signup):{}",user.getUsername());
+            return new ResponseEntity<>("Error while creating admin new user.",HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

@@ -68,7 +68,12 @@ public class PublicController {
         newuser.setPassword(user.getPassword());
         newuser.setEmail(user.getEmail());
         newuser.setSentimentAnalysis(user.isSentimentAnalysis());
-        userService.saveNewUser(newuser);
+        try {
+            userService.saveNewUser(newuser);
+        }catch (Exception e){
+            log.error("Error while creating new user(signup):{}",user.getUsername());
+            throw new RuntimeException("Error while signup new user.",e);
+        }
     }
 
 

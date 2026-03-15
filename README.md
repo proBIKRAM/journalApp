@@ -95,17 +95,17 @@ spring.redis.password=<redis-password>
 ```
 3. Build
 ```bash
-Bashmvn clean install
+mvn clean install
 ```
 4. Run locally
 ```bash
-Bashmvn spring-boot:run
+mvn spring-boot:run
 ```
   → Open http://localhost:8080
   
 ## 🐳 Docker Deployment
 ```bash
-Bashdocker build -t journalapp .
+docker build -t journalapp .
 docker run -p 8080:8080 journalapp
 ```
 ## 🔑 Authentication

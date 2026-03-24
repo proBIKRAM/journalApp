@@ -45,3 +45,5 @@ app:
 
 server:
   port: ${PORT:8080}  # Render will provide PORT automatically
+
+frontend: ${FRONTEND_URL}

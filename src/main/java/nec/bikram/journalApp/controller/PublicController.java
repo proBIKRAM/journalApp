@@ -18,6 +18,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Tag(name = "Public API", description = "Login, Signup")
 @Slf4j
 @RestController
@@ -51,8 +54,12 @@ public class PublicController {
                     new UsernamePasswordAuthenticationToken(
                             user.getUsername(), user.getPassword()));
             UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-            String jwt = jwtUtil.generateToken(userDetails.getUsername());
-            return ResponseEntity.ok(jwt);
+            String token = jwtUtil.generateToken(userDetails.getUsername());
+            Map<String, String> body = new HashMap<>();
+
+            body.put("jwt", token);
+            return ResponseEntity.ok(token);
+
         }catch (Exception e){
             log.error("Error while logging in user:{}",user.getUsername());
             return ResponseEntity.badRequest().body("Invalid username or password");

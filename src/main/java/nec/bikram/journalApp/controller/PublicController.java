@@ -43,7 +43,7 @@ public class PublicController {
 
     @PostMapping("/login")
     @Operation(summary = "Login a User")
-    public ResponseEntity<String> logIn (@RequestBody UserDto usr) {
+    public ResponseEntity<?> logIn (@RequestBody UserDto usr) {
 
         User user = new User();
         user.setUsername(usr.getUsername());
@@ -58,7 +58,7 @@ public class PublicController {
             Map<String, String> body = new HashMap<>();
 
             body.put("jwt", token);
-            return ResponseEntity.ok(token);
+            return new ResponseEntity<>(body, HttpStatus.OK);
 
         }catch (Exception e){
             log.error("Error while logging in user:{}",user.getUsername());

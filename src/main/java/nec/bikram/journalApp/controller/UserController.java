@@ -75,8 +75,8 @@ public class UserController {
            User userInDb = userService.getUserByUsername(username);
            if (userInDb != null  ) {
 
-               userInDb.setUsername(user.getUsername() != null && !user.getUsername().isEmpty() ? user.getUsername() : userInDb.getUsername());
-               userInDb.setPassword(user.getPassword() != null && !user.getPassword().isEmpty() ? user.getPassword() : userInDb.getPassword());
+               userInDb.setUsername( !user.getUsername().isEmpty() ? user.getUsername() : userInDb.getUsername());
+               userInDb.setPassword( !user.getPassword().isEmpty() ? user.getPassword() : userInDb.getPassword());
                userInDb.setEmail(user.getEmail() != null && !user.getEmail().isEmpty() ? user.getEmail()    : userInDb.getEmail());
                userInDb.setCity(user.getCity() != null && !user.getCity().isEmpty() ? user.getCity() : userInDb.getCity());
                userInDb.setSentimentAnalysis(user.isSentimentAnalysis());

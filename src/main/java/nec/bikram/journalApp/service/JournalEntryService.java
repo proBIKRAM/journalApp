@@ -49,7 +49,7 @@ public class JournalEntryService {
     }
 
     @Transactional
-    public boolean deleteById(ObjectId id, String username) {
+    public boolean deleteById(String id, String username) {
         boolean removed = false;
         try {
             User user = userService.getUserByUsername(username);

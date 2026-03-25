@@ -69,11 +69,10 @@ public class JournalEntryController {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
         List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(id)).collect(Collectors.toList());
-        Optional<JournalEntry> journal = journalEntryService.findById(id);
         if (!collect.isEmpty()) {
             Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
             if (journalEntry.isPresent()) {
-                return new ResponseEntity<>(journal.get(), HttpStatus.OK);
+                return new ResponseEntity<>(journalEntry.get(), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -95,37 +94,48 @@ public class JournalEntryController {
 
     @PutMapping("/id/{myId}")
     @Operation(summary = "Update a Journal Entry by ID")
-    public ResponseEntity<?> updateJournalEntryById(@PathVariable String myId, @RequestBody JournalDto Entry) {
+    public ResponseEntity<?> updateJournalEntryById(@PathVariable String myId,
+                                                    @RequestBody JournalDto entryDto) {
+
+
+        if (!ObjectId.isValid(myId)) {
+            return ResponseEntity.badRequest().body("Invalid ID format");
+        }
 
         ObjectId id = new ObjectId(myId);
 
-        JournalEntry myEntry = new JournalEntry();
-        myEntry.setTitle(Entry.getTitle());
-        myEntry.setContent(Entry.getContent());
-        myEntry.setSentiment(Entry.getSentiment());
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
         User user = userService.getUserByUsername(username);
-        List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(id)).collect(Collectors.toList());
 
-        if (!collect.isEmpty()) {
-            Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
-            if (journalEntry.isPresent()) {
-                JournalEntry old = journalEntry.get();
 
-                old.setTitle(myEntry.getTitle() != null && !myEntry.getTitle().isEmpty() ? myEntry.getTitle() : old.getTitle());
-                old.setContent(myEntry.getContent() != null && !myEntry.getContent().isEmpty() ? myEntry.getContent() : old.getContent());
-                old.setSentiment(myEntry.getSentiment() != null ? myEntry.getSentiment() : old.getSentiment());
+        Optional<JournalEntry> journalOpt = user.getJournalEntries()
+                .stream()
+                .filter(j -> j.getId().equals(id))
+                .findFirst();
 
-                journalEntryService.saveEntry(old);
-                return new ResponseEntity<>(old, HttpStatus.OK);
-            }
+        if (journalOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Journal not found or not authorized");
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        JournalEntry oldEntry = journalOpt.get();
 
 
+        if (entryDto.getTitle() != null && !entryDto.getTitle().isEmpty()) {
+            oldEntry.setTitle(entryDto.getTitle());
+        }
+        if (entryDto.getContent() != null && !entryDto.getContent().isEmpty()) {
+            oldEntry.setContent(entryDto.getContent());
+        }
+        if (entryDto.getSentiment() != null) {
+            oldEntry.setSentiment(entryDto.getSentiment());
+        }
+
+        journalEntryService.saveEntry(oldEntry);
+
+        return ResponseEntity.ok(oldEntry);
     }
 }
 

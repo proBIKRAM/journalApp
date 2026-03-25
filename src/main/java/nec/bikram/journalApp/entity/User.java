@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 public class User {
     @Id
-    private ObjectId id;
+    private String id;
     @Indexed(unique = true)
     @NonNull
     private String username;

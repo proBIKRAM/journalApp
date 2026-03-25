@@ -49,9 +49,9 @@ public class JournalEntryService {
     }
 
     @Transactional
-    public boolean deleteById(String myid, String username) {
+    public boolean deleteById(ObjectId id, String username) {
         boolean removed = false;
-        ObjectId id = new ObjectId(myid);
+
         try {
             User user = userService.getUserByUsername(username);
             removed= user.getJournalEntries().removeIf(x -> x.getId().equals(id));

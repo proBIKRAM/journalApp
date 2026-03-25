@@ -94,17 +94,17 @@ public class JournalEntryController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/id/{myId}")
+    @PutMapping("/id/{id}")
     @Operation(summary = "Update a Journal Entry by ID")
-    public ResponseEntity<?> updateJournalEntryById(@PathVariable String myId,
+    public ResponseEntity<?> updateJournalEntryById(@PathVariable String id,
                                                     @RequestBody JournalDto entryDto) {
 
 
-        if (!ObjectId.isValid(myId)) {
+        if (!ObjectId.isValid(id)) {
             return ResponseEntity.badRequest().body("Invalid ID format");
         }
 
-        ObjectId id = new ObjectId(myId);
+        ObjectId myid = new ObjectId(id);
 
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

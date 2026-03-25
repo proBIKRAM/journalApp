@@ -10,4 +10,5 @@ public interface JournalEntryRepository extends MongoRepository<JournalEntry, Ob
 
     List<JournalEntry> id(String id);
 
+    void deletesById(String id);
 }

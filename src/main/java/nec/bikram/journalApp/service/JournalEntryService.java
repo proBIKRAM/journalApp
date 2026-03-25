@@ -49,7 +49,7 @@ public class JournalEntryService {
     }
 
     @Transactional
-    public boolean deleteById(ObjectId id, String username) {
+    public boolean deleteById(String id, String username) {
         boolean removed = false;
 
         try {
@@ -57,7 +57,7 @@ public class JournalEntryService {
             removed= user.getJournalEntries().removeIf(x -> x.getId().equals(id));
             if (removed) {
                 userService.saveUser(user);
-                journalEntryRepository.deleteById(id);
+                journalEntryRepository.deletesById(id);
             }
 
         }catch(Exception e){

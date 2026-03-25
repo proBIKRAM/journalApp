@@ -25,6 +25,7 @@ public class User {
     @NonNull
     private String password;
 
+    private String city;
     private String email;
     private boolean sentimentAnalysis;
 

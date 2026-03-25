@@ -15,5 +15,6 @@ public class UserDto {
     @NotEmpty
     private String password;
     private String email;
+    private String city;
     private boolean sentimentAnalysis;
 }

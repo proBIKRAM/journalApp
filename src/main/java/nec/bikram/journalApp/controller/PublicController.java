@@ -74,6 +74,7 @@ public class PublicController {
         newuser.setUsername(user.getUsername());
         newuser.setPassword(user.getPassword());
         newuser.setEmail(user.getEmail());
+        newuser.setCity(user.getCity());
         newuser.setSentimentAnalysis(user.isSentimentAnalysis());
         try {
             userService.saveNewUser(newuser);

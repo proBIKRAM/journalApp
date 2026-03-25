@@ -67,15 +67,18 @@ public class UserController {
         user.setUsername(usr.getUsername());
         user.setPassword(usr.getPassword());
         user.setEmail(usr.getEmail());
+        user.setCity(usr.getCity());
         user.setSentimentAnalysis(user.isSentimentAnalysis());
        try {
            Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
            String username=authentication.getName();
            User userInDb = userService.getUserByUsername(username);
-           if (userInDb != null) {
-               userInDb.setUsername(user.getUsername());
-               userInDb.setPassword(user.getPassword());
-               userInDb.setEmail(user.getEmail());
+           if (userInDb != null  ) {
+
+               userInDb.setUsername(user.getUsername() != null && !user.getUsername().isEmpty() ? user.getUsername() : userInDb.getUsername());
+               userInDb.setPassword(user.getPassword() != null && !user.getPassword().isEmpty() ? user.getPassword() : userInDb.getPassword());
+               userInDb.setEmail(user.getEmail() != null && !user.getEmail().isEmpty() ? user.getEmail()    : userInDb.getEmail());
+               userInDb.setCity(user.getCity() != null && !user.getCity().isEmpty() ? user.getCity() : userInDb.getCity());
                userInDb.setSentimentAnalysis(user.isSentimentAnalysis());
            }
            userService.saveNewUser(userInDb);
@@ -107,12 +110,26 @@ public ResponseEntity<?> gettingUserByUsername() {
 public ResponseEntity<?> greetings(){
     try {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        WeatherResponse weatherResponse = weatherService.getWeather("London");
+
+        if (authentication == null) {
+            log.error("Authentication object is null");
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        String name = authentication.getName();
+        User userInDb = userService.getUserByUsername(name);
+        String city=userInDb.getCity();
+
+        if(city==null || city.isEmpty()){
+            city="Kathmandu";
+        }
+
+        WeatherResponse weatherResponse = weatherService.getWeather(city);
         String greeting = "";
         if (weatherResponse != null) {
-            greeting = ", Weather feels like " + weatherResponse.getCurrent().getFeelsLike() + " C";
+            greeting = city+", Weather feels like " + weatherResponse.getCurrent().getFeelsLike() + " °C";
         }
-        return ResponseEntity.ok("Hello dear - " + authentication.getName() +"!"+ greeting);
+        return ResponseEntity.ok("Hello dear - " + name +"!"+ greeting);
     }catch (Exception e){
         log.error("Error getting greetings: {}", e.getMessage());
         return ResponseEntity.status(500).body("Error getting greetings");

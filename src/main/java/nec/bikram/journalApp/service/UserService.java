@@ -32,9 +32,7 @@ public class UserService {
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void saveUser(User user){
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new RuntimeException("Username already exists");
-        }
+
         userRepository.save(user);
     }
     public boolean saveNewUser(User user){

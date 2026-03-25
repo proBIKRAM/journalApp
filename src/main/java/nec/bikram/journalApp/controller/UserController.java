@@ -35,7 +35,7 @@ public class UserController {
 
     @GetMapping("search/{username}")
     @Operation(summary = "Search other User by Username")
-    public ResponseEntity<?> getUserById(@PathVariable String username){
+    public ResponseEntity<?> getUserByUserName(@PathVariable String username){
 
            User usr = userService.getUserByUsername(username);
            if(usr!=null) {

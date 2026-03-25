@@ -83,6 +83,4 @@ public class PublicController {
             throw new RuntimeException("Error while signup new user.",e);
         }
     }
-
-
 }

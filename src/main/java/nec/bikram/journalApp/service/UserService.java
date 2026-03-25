@@ -32,10 +32,17 @@ public class UserService {
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void saveUser(User user){
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            throw new RuntimeException("Username already exists");
+        }
         userRepository.save(user);
     }
     public boolean saveNewUser(User user){
         try{
+            if (userRepository.findByUsername(user.getUsername()) != null) {
+                throw new RuntimeException("Username already exists");
+
+            }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRoles(Arrays.asList("USER"));
             userRepository.save(user);
@@ -64,4 +71,5 @@ public class UserService {
         userRepository.save(user);
 
     }
+
 }

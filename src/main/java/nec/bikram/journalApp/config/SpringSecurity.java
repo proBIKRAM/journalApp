@@ -50,19 +50,6 @@ public class SpringSecurity{
                 .build();
     }
 
-    @Bean
-    public InMemoryUserDetailsManager users() {
-        String username = System.getenv("PROM_USER");
-        String password = System.getenv("PROM_PASS");
-
-        UserDetails user = User
-                .withUsername(username)
-                .password("{noop}" + password)
-                .roles("MONITOR")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
-    }
 
 
     @Autowired

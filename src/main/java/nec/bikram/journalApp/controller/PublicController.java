@@ -76,8 +76,15 @@ public class PublicController {
         newuser.setEmail(user.getEmail());
         newuser.setCity(user.getCity());
         newuser.setSentimentAnalysis(user.isSentimentAnalysis());
+
+
         try {
-            userService.saveNewUser(newuser);
+            User userByUsername = userService.getUserByUsername(user.getUsername());
+            if (userByUsername != null) {
+                throw new RuntimeException("Username already exists.");
+            }else {
+                userService.saveNewUser(newuser);
+            }
         }catch (Exception e){
             log.error("Error while creating new user(signup):{}",user.getUsername());
             throw new RuntimeException("Error while signup new user.",e);

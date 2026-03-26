@@ -1,0 +1,8 @@
+scrape_configs:
+  - job_name: 'spring-prod'
+    metrics_path: '/actuator/prometheus'
+    basic_auth:
+      username: ${PROM_USER}
+      password: ${PROM_PASS}
+    static_configs:
+      - targets: ['https://journalapp-vg41.onrender.com']

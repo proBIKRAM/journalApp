@@ -47,3 +47,15 @@ server:
   port: ${PORT:8080}  # Render will provide PORT automatically
 
 frontend: ${FRONTEND_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:health,info,prometheus}
+  endpoint:
+    prometheus:
+      enabled: ${MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED:true}
+
+PROM_USER: ${PROM_USER}
+PROM_PASSWORD: ${PROM_PASSWORD}

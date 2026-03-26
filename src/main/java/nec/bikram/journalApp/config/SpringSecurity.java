@@ -12,8 +12,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -31,6 +34,8 @@ public class SpringSecurity{
 
         return http.authorizeHttpRequests(request -> request
                         .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/actuator/prometheus").hasRole("MONITOR")
+                        .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/journal/**", "/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(
@@ -43,6 +48,20 @@ public class SpringSecurity{
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public InMemoryUserDetailsManager users() {
+        String username = System.getenv("PROM_USER");
+        String password = System.getenv("PROM_PASS");
+
+        UserDetails user = User
+                .withUsername(username)
+                .password("{noop}" + password)
+                .roles("MONITOR")
+                .build();
+
+        return new InMemoryUserDetailsManager(user);
     }
 
 

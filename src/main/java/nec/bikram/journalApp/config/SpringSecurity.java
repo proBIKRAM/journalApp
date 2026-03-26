@@ -34,7 +34,7 @@ public class SpringSecurity{
 
         return http.authorizeHttpRequests(request -> request
                         .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/actuator/prometheus").hasRole("MONITOR")
+                        .requestMatchers("/actuator/prometheus").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/journal/**", "/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")

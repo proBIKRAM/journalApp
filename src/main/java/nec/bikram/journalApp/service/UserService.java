@@ -35,6 +35,7 @@ public class UserService {
 
         userRepository.save(user);
     }
+
     public boolean saveNewUser(User user){
         try{
             if (userRepository.findByUsername(user.getUsername()) != null) {
@@ -53,9 +54,7 @@ public class UserService {
     public List<User> getAll(){
         return userRepository.findAll();
     }
-    public Optional<User> findById(ObjectId id){
-        return userRepository.findById(id);
-    }
+    public boolean userExists(String username) {  return userRepository.existsByUsername(username);}
     public void deleteByUsername(String id) {
         userRepository.deleteUserByUsername(id);
     }

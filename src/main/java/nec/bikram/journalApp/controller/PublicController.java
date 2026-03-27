@@ -5,10 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import nec.bikram.journalApp.dto.UserDto;
 import nec.bikram.journalApp.entity.User;
-import nec.bikram.journalApp.repository.UserRepository;
 import nec.bikram.journalApp.service.UserDetailsServiceImpl;
 import nec.bikram.journalApp.service.UserService;
-import nec.bikram.journalApp.utils.JwtUtil;
 import nec.bikram.journalApp.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,7 +67,7 @@ public class PublicController {
 
     @PostMapping("/signup")
     @Operation(summary = "Create a new User")
-    public void signUp (@RequestBody UserDto user) {
+    public ResponseEntity<String> signUp (@RequestBody UserDto user) {
         User newuser = new User();
         newuser.setUsername(user.getUsername());
         newuser.setPassword(user.getPassword());
@@ -78,16 +76,16 @@ public class PublicController {
         newuser.setSentimentAnalysis(user.isSentimentAnalysis());
 
 
+        if (userService.userExists(user.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+        }
+
         try {
-            User userByUsername = userService.getUserByUsername(user.getUsername());
-            if (userByUsername != null) {
-                throw new RuntimeException("Username already exists.");
-            }else {
-                userService.saveNewUser(newuser);
-            }
-        }catch (Exception e){
-            log.error("Error while creating new user(signup):{}",user.getUsername());
-            throw new RuntimeException("Error while signup new user.",e);
+            userService.saveNewUser(newuser);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
+        } catch (Exception e) {
+            log.error("Error while creating new user(signup): {}", user.getUsername());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while signup");
         }
     }
 }
